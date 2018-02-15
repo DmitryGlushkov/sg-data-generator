@@ -1,7 +1,5 @@
 package com.rs.sg.datagen.model;
 
-import org.springframework.context.annotation.Bean;
-
 import javax.faces.bean.ManagedBean;
 
 @ManagedBean
@@ -55,5 +53,10 @@ public class ConnectionProperties {
 
     public void setDbName(String dbName) {
         this.dbName = dbName;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("jdbc:postgresql://%s:%d/%s", dbHost, dbPort, dbName);
     }
 }
