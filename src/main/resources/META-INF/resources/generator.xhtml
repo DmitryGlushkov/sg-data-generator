@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Servergraph Data-Generator</title>
+    <h:outputStylesheet name="style.css"/>
+</h:head>
+<h:body>
+    <div class="m1">
+        <h:form id="form">
+            <h2>Data-Generator configuration</h2>
+            <p:accordionPanel>
+                <p:tab title="Connection">
+                    <h:panelGrid columns="4" columnClasses="column" cellpadding="5">
+
+                        <h:outputLabel value="Host:" for="db_host"/>
+                        <p:inplace id="db_host">
+                            <h:inputText value="#{connectionProperties.dbHost}"/>
+                        </p:inplace>
+
+                        <h:outputLabel value="Port:" for="db_port"/>
+                        <p:inplace id="db_port">
+                            <h:inputText value="#{connectionProperties.dbPort}"/>
+                        </p:inplace>
+
+                        <h:outputLabel value="Login:" for="db_login"/>
+                        <p:inplace id="db_login">
+                            <h:inputText value="#{connectionProperties.login}"/>
+                        </p:inplace>
+
+                        <h:outputLabel value="Password:" for="db_pass"/>
+                        <p:inplace id="db_pass">
+                            <h:inputText value="#{connectionProperties.pass}"/>
+                        </p:inplace>
+
+                        <h:outputLabel value="DB Name:" for="db_name"/>
+                        <p:inplace id="db_name">
+                            <h:inputText value="#{connectionProperties.dbName}"/>
+                        </p:inplace>
+
+                    </h:panelGrid>
+                    <p:commandButton value="Connect" update="display" icon="ui-icon-check" actionListener="#{guiModel.onConnect}"/><br/>
+                    <h:outputText id="display" value="#{connectionProperties.dbName}"/>
+
+
+                </p:tab>
+            </p:accordionPanel>
+        </h:form>
+    </div>
+
+</h:body>
+</html>
