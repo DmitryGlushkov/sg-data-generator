@@ -1,19 +1,21 @@
 package com.rs.sg.datagen.model;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 
 @ManagedBean
+@ViewScoped
 public class ConnectionProperties {
 
-    private String dbHost = "localhost";
+    private String dbHost = "sg-rhel6-11.servergraph.net";
 
     private Integer dbPort = 5432;
 
     private String dbName = "servergraph";
 
-    private String login = "sg";
+    private String login = "servergraph";
 
-    private String pass = "sg-pass";
+    private String pass = "";
 
     public String getLogin() {
         return login;

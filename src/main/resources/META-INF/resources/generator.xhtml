@@ -53,8 +53,19 @@
         <br/>
 
         <p:panel id="config_panel" header="Config#1" >
+            <h:form>
+                <p:outputLabel value="#{guiModel.connected}"/><br/>
+                <p:outputLabel for="table_name" value="Table name: " />
+                <p:autoComplete
+                        id="table_name"
+                        maxResults="25"
+                        value="#{guiModel.selectedTable}"
+                        completeMethod="#{guiModel.completeTable}">
+                    <p:ajax event="itemSelect" listener="#{guiModel.requestSchema}" process="@form"/>
+                </p:autoComplete>
 
-            <p:outputLabel value="#{guiModel.connected}"/>
+
+            </h:form>
         </p:panel>
 
     </div>
