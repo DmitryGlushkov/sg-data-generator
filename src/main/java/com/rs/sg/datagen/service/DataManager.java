@@ -1,8 +1,9 @@
 package com.rs.sg.datagen.service;
 
 import com.rs.sg.datagen.db.Connector;
+import com.rs.sg.datagen.model.Column;
 import com.rs.sg.datagen.model.ConnectionProperties;
-import com.rs.sg.datagen.model.TableSchema;
+import com.rs.sg.datagen.model.Table;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -38,9 +39,9 @@ public class DataManager {
         return connector != null && connector.isActive();
     }
 
-    public TableSchema getTableSchema(String tName) throws Exception {
+    public List<Column> getColumns(String tName) throws Exception {
         if (hasConnector()) {
-            return connector.queryTableSchema(tName);
+            return connector.queryTableColumns(tName);
         }
         return null;
     }

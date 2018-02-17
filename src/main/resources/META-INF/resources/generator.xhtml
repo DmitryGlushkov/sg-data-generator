@@ -8,10 +8,11 @@
     <title>Servergraph Data-Generator</title>
     <h:outputStylesheet name="style.css"/>
 </h:head>
-<h:body>
+<h:body  style="font-size: small">
+    <p:growl id="growl" showDetail="true" life="2500"/>
+    <h1><p:outputLabel value="Data-Generator configuration"/></h1>
     <div class="m1">
-        <h:form id="form">
-            <h:outputLabel value="Data-Generator configuration"/>
+        <h:form id="form_connect">
             <p:accordionPanel id="con_panel" >
                 <p:tab id="con_tab" title="Connection: #{guiModel.connected ? 'ON' : 'OFF'}" >
                     <h:panelGrid columns="4" columnClasses="column" cellpadding="5" >
@@ -43,8 +44,13 @@
 
                     </h:panelGrid>
                     <br/>
-                    <p:growl id="growl" showDetail="true" life="2500" />
-                    <p:commandButton disabled="#{guiModel.connected}" value="Connect" update="growl,con_panel,config_panel" icon="ui-icon-check" actionListener="#{guiModel.onConnect}"/><br/>
+
+                    <p:commandButton
+                            disabled="#{guiModel.connected}"
+                            value="Connect"
+                            update="growl,con_panel,config_panel"
+                            icon="ui-icon-check"
+                            actionListener="#{guiModel.onConnect}"/><br/>
 
                 </p:tab>
             </p:accordionPanel>
@@ -52,18 +58,43 @@
 
         <br/>
 
-        <p:panel id="config_panel" header="Config#1" >
-            <h:form>
-                <p:outputLabel value="#{guiModel.connected}"/><br/>
-                <p:outputLabel for="table_name" value="Table name: " />
+        <p:panel id="config_panel" header="Schema" >
+            <h:form id="form_schema">
+
+                <h2><p:outputLabel for="table_name" value="Table name:"/></h2>
+
                 <p:autoComplete
                         id="table_name"
                         maxResults="25"
-                        value="#{guiModel.selectedTable}"
+                        value="#{guiModel.table.name}"
                         completeMethod="#{guiModel.completeTable}">
-                    <p:ajax event="itemSelect" listener="#{guiModel.requestSchema}" process="@form"/>
+                    <p:ajax event="itemSelect" listener="#{guiModel.requestTable}" update="config_panel,growl"/>
                 </p:autoComplete>
 
+                <p:outputPanel rendered="#{guiModel.table.hasColumns()}">
+                    <h2><p:outputLabel value="Columns:"/></h2>
+                    <p:dataTable id="column_table" var="col" value="#{guiModel.table.columns}">
+                        <p:column headerText="Title">
+                            <p:outputLabel value="#{col.name}"/>
+                        </p:column>
+                        <p:column headerText="Data type">
+                            <p:outputLabel value="#{col.dataType}"/>
+                        </p:column>
+                        <p:column headerText="Data">
+                            <p:outputLabel value="#{col.udtName}"/>
+                        </p:column>
+                        <p:column headerText="Max len">
+                            <p:outputLabel value="#{col.maxLength}"/>
+                        </p:column>
+                        <p:column headerText="Defenition">
+                            <p:selectOneMenu value="#{col.definition}" >
+                                <p:ajax event="itemSelect" listener="#{guiModel.itemSelected}"/>
+                                <f:selectItems value="#{guiModel.definitions}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:dataTable>
+
+                </p:outputPanel>
 
             </h:form>
         </p:panel>

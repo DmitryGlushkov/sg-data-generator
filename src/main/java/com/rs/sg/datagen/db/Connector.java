@@ -1,7 +1,8 @@
 package com.rs.sg.datagen.db;
 
+import com.rs.sg.datagen.model.Column;
 import com.rs.sg.datagen.model.DataType;
-import com.rs.sg.datagen.model.TableSchema;
+import com.rs.sg.datagen.model.Table;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -48,11 +49,11 @@ public class Connector {
         return names;
     }
 
-    public TableSchema queryTableSchema(String tName) throws Exception {
+    public List<Column> queryTableColumns(String tName) throws Exception {
         Statement statement = connection.createStatement();
         String sql = String.format("SELECT column_name, is_nullable, data_type, udt_name, character_maximum_length FROM information_schema.columns where table_name = '%s'", tName);
         ResultSet resultSet = statement.executeQuery(sql);
-        List<TableSchema.Column> columns = new ArrayList<>();
+        List<Column> columns = new ArrayList<>();
         while (resultSet.next()){
             // column_name
             String colName = resultSet.getString(1);
@@ -76,10 +77,10 @@ public class Connector {
             // character_maximum_length
             int len = resultSet.getInt(5);
 
-            columns.add(new TableSchema.Column(colName, isNullable, dataType, udtName, len));
+            columns.add(new Column(colName, isNullable, dataType, udtName, len));
         }
         statement.close();
-        return new TableSchema(tName, columns);
+        return columns;
     }
 
 

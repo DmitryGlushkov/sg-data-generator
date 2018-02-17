@@ -1,18 +1,15 @@
 package com.rs.sg.datagen.model;
 
 import com.rs.sg.datagen.service.DataManager;
-import org.primefaces.event.SelectEvent;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
@@ -22,15 +19,27 @@ import static javax.faces.application.FacesMessage.SEVERITY_INFO;
 @ViewScoped
 public class GuiModel {
 
-    private boolean isConnected = false;
-    private List<String> tables = new ArrayList<>();
-    private String selectedTable = "";
-
     @ManagedProperty("#{dataManager}")
     private DataManager dataManager;
 
     @ManagedProperty("#{connectionProperties}")
     private ConnectionProperties connectionProperties;
+
+    private boolean isConnected = false;
+    private List<String> tables = new ArrayList<>();
+    private Table table = new Table();
+    private List<Definition> definitions = Arrays.asList(
+            Definition.STRING,
+            Definition.INTEGER,
+            Definition.DATE,
+            Definition.NETWORK,
+            Definition.DOUBLE,
+            Definition.INDEX,
+            Definition.LINK,
+            Definition.QUERY,
+            Definition.SEQUENCE,
+            Definition.INTEGER,
+            Definition.LINK);
 
     public void onConnect() {
         tables.clear();
@@ -52,15 +61,22 @@ public class GuiModel {
         return tables.stream().filter(t -> t.contains(queryLower)).collect(Collectors.toList());
     }
 
-    public void requestSchema(AjaxBehaviorEvent event) {
-        System.out.println("requestSchema!");
+    public void requestTable(AjaxBehaviorEvent event) {
         try {
-            TableSchema schema = dataManager.getTableSchema(selectedTable);
-            System.out.println(1);
+            if (table.getColumns() == null) {
+                table.setColumns(new ArrayList<>());
+            }
+            table.getColumns().clear();
+            table.getColumns().addAll(dataManager.getColumns(table.getName()));
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Exception", e.getMessage() != null ? e.getMessage() : e.toString()));
         }
     }
+
+    public void itemSelected(AjaxBehaviorEvent event) {
+        System.out.println(1);
+    }
+
 
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
@@ -82,11 +98,11 @@ public class GuiModel {
         return isConnected;
     }
 
-    public String getSelectedTable() {
-        return selectedTable;
+    public Table getTable() {
+        return table;
     }
 
-    public void setSelectedTable(String selectedTable) {
-        this.selectedTable = selectedTable;
+    public List<Definition> getDefinitions() {
+        return definitions;
     }
 }
