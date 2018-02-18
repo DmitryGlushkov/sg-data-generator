@@ -14,6 +14,10 @@ public enum Definition {
     LINK,
     SEQUENCE,
     INDEX,
-    QUERY
+    QUERY;
 
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

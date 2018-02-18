@@ -1,22 +1,24 @@
 package com.rs.sg.datagen.model;
 
+import javax.faces.event.AjaxBehaviorEvent;
+
 public class Column {
 
     private final String name;
-    private final String udtName;
+    private final String dataType;
     private final boolean isNullable;
-    private final DataType dataType;
+    private final Level level;
     private final int maxLength;
     private Definition definition;
 
-    public Column(String name, boolean isNullable, DataType dataType, String udtName, int maxLength){
+    public Column(String name, boolean isNullable, Level level, String dataType, int maxLength){
         this.name = name;
-        this.udtName = udtName;
-        this.isNullable = isNullable;
         this.dataType = dataType;
+        this.isNullable = isNullable;
+        this.level = level;
         this.maxLength = maxLength;
-        if (dataType == DataType.BUILT_IN) {
-            definition = PostgresUdt.getDefinition(udtName);
+        if (level == Level.BUILT_IN) {
+            definition = PostgresUdt.getDefinition(dataType);
         } else {
             definition = Definition.SEQUENCE;
         }
@@ -26,16 +28,16 @@ public class Column {
         return name;
     }
 
-    public String getUdtName() {
-        return udtName;
+    public String getDataType() {
+        return dataType;
     }
 
     public boolean isNullable() {
         return isNullable;
     }
 
-    public DataType getDataType() {
-        return dataType;
+    public Level getLevel() {
+        return level;
     }
 
     public int getMaxLength() {
@@ -48,5 +50,9 @@ public class Column {
 
     public void setDefinition(Definition definition) {
         this.definition = definition;
+    }
+
+    public void onIntChange(AjaxBehaviorEvent event){
+        System.out.println("onIntChange");
     }
 }

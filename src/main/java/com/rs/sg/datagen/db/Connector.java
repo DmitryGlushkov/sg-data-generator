@@ -1,8 +1,7 @@
 package com.rs.sg.datagen.db;
 
 import com.rs.sg.datagen.model.Column;
-import com.rs.sg.datagen.model.DataType;
-import com.rs.sg.datagen.model.Table;
+import com.rs.sg.datagen.model.Level;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -60,16 +59,16 @@ public class Connector {
             // is_nullable
             boolean isNullable = resultSet.getBoolean(2);
             // data_type
-            DataType dataType = null;
+            Level level = null;
             switch (resultSet.getString(3)) {
                 case "ARRAY":
-                    dataType = DataType.ARRAY;
+                    level = Level.ARRAY;
                     break;
                 case "USER-DEFINED":
-                    dataType = DataType.USER_DEFINED;
+                    level = Level.USER_DEFINED;
                     break;
                 default:
-                    dataType = DataType.BUILT_IN;
+                    level = Level.BUILT_IN;
                     break;
             }
             // udt_name
@@ -77,7 +76,7 @@ public class Connector {
             // character_maximum_length
             int len = resultSet.getInt(5);
 
-            columns.add(new Column(colName, isNullable, dataType, udtName, len));
+            columns.add(new Column(colName, isNullable, level, udtName, len));
         }
         statement.close();
         return columns;

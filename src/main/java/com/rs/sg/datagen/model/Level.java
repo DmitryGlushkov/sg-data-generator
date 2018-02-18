@@ -1,6 +1,6 @@
 package com.rs.sg.datagen.model;
 
-public enum DataType {
+public enum Level {
 
     ARRAY, USER_DEFINED, BUILT_IN
 

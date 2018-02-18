@@ -77,21 +77,65 @@
                         <p:column headerText="Title">
                             <p:outputLabel value="#{col.name}"/>
                         </p:column>
-                        <p:column headerText="Data type">
-                            <p:outputLabel value="#{col.dataType}"/>
+                        <p:column headerText="Level">
+                            <p:outputLabel value="#{col.level}"/>
                         </p:column>
                         <p:column headerText="Data">
-                            <p:outputLabel value="#{col.udtName}"/>
+                            <p:outputLabel value="#{col.dataType}"/>
                         </p:column>
                         <p:column headerText="Max len">
-                            <p:outputLabel value="#{col.maxLength}"/>
+                            <p:outputLabel value="#{col.maxLength==0? '-' : col.maxLength}"/>
                         </p:column>
                         <p:column headerText="Defenition">
-                            <p:selectOneMenu value="#{col.definition}" >
-                                <p:ajax event="itemSelect" listener="#{guiModel.itemSelected}"/>
-                                <f:selectItems value="#{guiModel.definitions}" />
-                            </p:selectOneMenu>
+                            Defenition ....
                         </p:column>
+                        <p:column style="width:16px">
+                            <p:rowToggler />
+                        </p:column>
+
+                        <p:rowExpansion>
+                            <!--jhkjsdhf-->
+
+
+                            <h:form id="definition_form">
+                                <p:selectOneMenu value="#{col.definition}" >
+                                    <p:ajax event="itemSelect" listener="#{guiModel.itemSelected}" update="definition_form"/>
+                                    <f:selectItems value="#{guiModel.definitions}"/>
+                                </p:selectOneMenu>
+                                <br/>
+
+                                <!--INTEGER-->
+                                <p:outputPanel rendered="#{col.definition.toString() eq 'INTEGER'}">
+                                    <p:outputLabel value="Start number:" />
+                                    <p:inputNumber id="start_num" binding="#{endComponent}">
+                                        <f:attribute name="test" value="glu" />
+
+                                        <p:ajax listener="#{col.onIntChange}"/>
+                                    </p:inputNumber>
+                                    <br/>
+                                    <p:outputLabel value="End number:" />
+                                    <p:inputNumber id="end_num" />
+                                </p:outputPanel>
+
+                                <!--STRING-->
+                                <p:outputPanel rendered="#{col.definition.toString() eq 'STRING'}">
+                                    <p:outputLabel value="Start length:" /> <p:inputNumber id="start_len" title="asdsad"/>
+                                    <br/>
+                                    <p:outputLabel value="End length:" /> <p:inputNumber id="end_len" />
+                                </p:outputPanel>
+
+                                <!--SEQUENCE-->
+                                <p:outputPanel rendered="#{col.definition.toString() eq 'STRING'}">
+                                    Text: <p:inputText />
+                                </p:outputPanel>
+
+                            </h:form>
+                        </p:rowExpansion>
+
+
+
+
+
                     </p:dataTable>
 
                 </p:outputPanel>
