@@ -44,12 +44,13 @@ public class PostgresUdt {
         udtMap.put("\"char\"", Definition.STRING);  // 1 bytes
 
         // BYTE
-        udtMap.put("bytea", Definition.BYTE);      // variable-length binary string
+        //udtMap.put("bytea", Definition.BYTE);      // variable-length binary string
+        udtMap.put("bytea", Definition.STRING);      // variable-length binary string
 
         // NETWORK
-        udtMap.put("inet", Definition.NETWORK);      // IPv4 and IPv6 networks: 7 or 19 bytes
-        udtMap.put("cidr", Definition.NETWORK);      // IPv4 and IPv6 hosts and networks: 7 or 19 bytes
-        udtMap.put("macaddr", Definition.NETWORK);   // 6 bytes
+        udtMap.put("inet", Definition.STRING);      // IPv4 and IPv6 networks: 7 or 19 bytes
+        udtMap.put("cidr", Definition.STRING);      // IPv4 and IPv6 hosts and networks: 7 or 19 bytes
+        udtMap.put("macaddr", Definition.STRING);   // 6 bytes
 
         // ---> not supported:
 

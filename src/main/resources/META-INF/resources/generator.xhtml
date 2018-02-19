@@ -87,34 +87,44 @@
                             <p:outputLabel value="#{col.maxLength==0? '-' : col.maxLength}"/>
                         </p:column>
                         <p:column headerText="Defenition">
-                            Defenition ....
+                            <p:outputLabel id="column_definition" value="#{col.definitionFormatted()}"/>
                         </p:column>
                         <p:column style="width:16px">
                             <p:rowToggler />
                         </p:column>
 
-                        <p:rowExpansion>
-                            <!--jhkjsdhf-->
 
+
+                        <p:rowExpansion>
 
                             <h:form id="definition_form">
+
                                 <p:selectOneMenu value="#{col.definition}" >
-                                    <p:ajax event="itemSelect" listener="#{guiModel.itemSelected}" update="definition_form"/>
+                                    <p:ajax event="itemSelect" listener="#{guiModel.itemSelected}" update="definition_form,:form_schema:column_table:column_definition"/>
                                     <f:selectItems value="#{guiModel.definitions}"/>
                                 </p:selectOneMenu>
                                 <br/>
 
                                 <!--INTEGER-->
                                 <p:outputPanel rendered="#{col.definition.toString() eq 'INTEGER'}">
-                                    <p:outputLabel value="Start number:" />
-                                    <p:inputNumber id="start_num" binding="#{endComponent}">
-                                        <f:attribute name="test" value="glu" />
+                                    <p:panelGrid class="ui-noborder" style="width: 400px" columns="2">
+                                        <p:outputLabel value="Start number:"/>
+                                        <p:inputNumber id="startNumber"
+                                                       
+                                                       value="#{col.lolca}"
+                                                       decimalPlaces="0">
+                                            <p:ajax update="growl,:form_schema:column_table:column_definition"/>
+                                        </p:inputNumber>
+                                        
+                                        <f:setPropertyActionListener value="" target=""
 
-                                        <p:ajax listener="#{col.onIntChange}"/>
-                                    </p:inputNumber>
-                                    <br/>
-                                    <p:outputLabel value="End number:" />
-                                    <p:inputNumber id="end_num" />
+                                        <p:outputLabel value="End number:"/>
+                                        <p:inputNumber id="endNumber"
+                                                       valueChangeListener="#{col.processValueChange}"
+                                                       decimalPlaces="0">
+                                            <p:ajax update="growl,:form_schema:column_table:column_definition"/>
+                                        </p:inputNumber>
+                                    </p:panelGrid>
                                 </p:outputPanel>
 
                                 <!--STRING-->
@@ -125,7 +135,7 @@
                                 </p:outputPanel>
 
                                 <!--SEQUENCE-->
-                                <p:outputPanel rendered="#{col.definition.toString() eq 'STRING'}">
+                                <p:outputPanel rendered="#{col.definition.toString() eq 'SEQUENCE'}">
                                     Text: <p:inputText />
                                 </p:outputPanel>
 

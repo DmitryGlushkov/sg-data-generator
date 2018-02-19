@@ -32,11 +32,11 @@ public class GuiModel {
             Definition.STRING,
             Definition.INTEGER,
             Definition.DATE,
-            Definition.NETWORK,
+            //Definition.NETWORK,
             Definition.DOUBLE,
             Definition.INDEX,
             Definition.LINK,
-            Definition.QUERY,
+            //Definition.QUERY,
             Definition.SEQUENCE,
             Definition.INTEGER,
             Definition.LINK);
@@ -104,5 +104,16 @@ public class GuiModel {
 
     public List<Definition> getDefinitions() {
         return definitions;
+    }
+
+    private int age;
+
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int a) {
+        age = a;
     }
 }
