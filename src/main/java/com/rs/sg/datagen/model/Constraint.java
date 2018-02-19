@@ -1,5 +1,6 @@
 package com.rs.sg.datagen.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +73,7 @@ public class Constraint {
     }
 
     static class Sequence extends Constraint {
-        List<java.lang.String> entries;
+        List<java.lang.String> entries = new ArrayList<>();
         @Override
         public java.lang.String toString() {
             return java.lang.String.format("[%d]", entries.size());

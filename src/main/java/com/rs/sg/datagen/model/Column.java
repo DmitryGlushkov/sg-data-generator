@@ -2,9 +2,6 @@ package com.rs.sg.datagen.model;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
@@ -68,36 +65,26 @@ public class Column {
         }
     }
 
-    private Object lolca;
-
-    public void processValueChange(ValueChangeEvent event){
+    public Object constraint(Object o) {
         try {
-            String varName = event.getComponent().getId();
-            switch (definition) {
-                case INTEGER:
-                    int value = Integer.parseInt((String) event.getNewValue());
-                    Constraint.Integer c = (Constraint.Integer) constraint;
-                    c.getClass().getDeclaredField(varName).setInt(c, value);
-                    break;
-                case STRING:
-                    break;
-                case SEQUENCE:
-                    break;
+            String varName = (String) o;
+            return constraint.getClass().getDeclaredField(varName).get(constraint);
+        } catch (Exception e){
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Exception", e.getMessage() != null ? e.getMessage() : e.toString()));
+        }
+        return null;
+    }
 
+    public void setConstraint(Object o) {
+        try {
+            String varName = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("varName");
+            if(constraint.getClass().getDeclaredField(varName).getAnnotatedType().getType() == int.class){
+                o = Integer.valueOf((String) o);
             }
+            constraint.getClass().getDeclaredField(varName).set(constraint, o);
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Exception", e.getMessage() != null ? e.getMessage() : e.toString()));
         }
-
-        System.out.println("processValueChange: " + event.getNewValue());
-
     }
 
-    public Object getLolca() {
-        return lolca;
-    }
-
-    public void setLolca(Object lolca) {
-        this.lolca = lolca;
-    }
 }
