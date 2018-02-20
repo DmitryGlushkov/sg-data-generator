@@ -37,11 +37,11 @@ public class GuiModel {
     private List<Definition> definitions = Arrays.asList(
             Definition.STRING,
             Definition.INTEGER,
-            Definition.DATE,
             Definition.DOUBLE,
+            Definition.DATE,
             Definition.INDEX,
             Definition.SEQUENCE,
-            Definition.INTEGER,
+            Definition.QUERY,
             Definition.LINK);
 
     public void onConnect() {

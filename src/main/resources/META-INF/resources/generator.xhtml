@@ -111,7 +111,7 @@
                         <p:column headerText="Max len">
                             <p:outputLabel value="#{col.maxLength==0? '-' : col.maxLength}"/>
                         </p:column>
-                        <p:column headerText="Defenition">
+                        <p:column headerText="Definition">
                             <p:outputLabel id="column_definition" value="#{col.definitionFormatted(false)}"/>
                         </p:column>
                         <p:column style="width:16px">
@@ -188,7 +188,6 @@
                                 <!--LINK-->
                                 <p:outputPanel rendered="#{col.definition.toString() eq 'LINK'}">
                                     <p:panelGrid class="ui-noborder" style="width: 400px" columns="2">
-
                                         <p:outputLabel value="Table:"/>
                                         <p:autoComplete
                                                 id="link_table_name"
@@ -198,7 +197,6 @@
                                             <f:param name="varName" value="table"/>
                                             <p:ajax event="itemSelect" update="growl,link_columns,:form_schema:column_table:column_definition"/>
                                         </p:autoComplete>
-
                                         <p:outputLabel value="Column:"/>
                                         <p:selectOneMenu value="#{col.constraint('column')}" id="link_columns">
                                             <f:selectItems value="#{guiModel.requestColumns(col.constraint('table'))}"/>
@@ -208,6 +206,15 @@
                                     </p:panelGrid>
                                 </p:outputPanel>
 
+                                <!--QUERY-->
+                                <p:outputPanel rendered="#{col.definition.toString() eq 'QUERY'}">
+                                    <p:inputText validator="#{queryValidator}"/>
+                                </p:outputPanel>
+
+                                <!--INDEX-->
+                                <p:outputPanel rendered="#{col.definition.toString() eq 'INDEX'}">
+
+                                </p:outputPanel>
 
                             </h:form>
                         </p:rowExpansion>

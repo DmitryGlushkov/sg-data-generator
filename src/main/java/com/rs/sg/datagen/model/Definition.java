@@ -4,9 +4,7 @@ public enum Definition {
 
     // 1 - for built-in types
     STRING,
-    //BYTE,
     INTEGER,
-    //NETWORK,
     DOUBLE,
     DATE,
 
@@ -14,7 +12,7 @@ public enum Definition {
     LINK,
     SEQUENCE,
     INDEX,
-    //QUERY
+    QUERY
     ;
 
     @Override

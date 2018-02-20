@@ -76,7 +76,13 @@ public class Connector {
             // character_maximum_length
             int len = resultSet.getInt(5);
 
-            columns.add(new Column(colName, isNullable, level, udtName, len));
+            Column column = new Column(colName, isNullable, level, udtName, len);
+            if (level.equals(Level.USER_DEFINED)) {
+
+            }
+
+
+            columns.add(column);
         }
         statement.close();
         return columns;

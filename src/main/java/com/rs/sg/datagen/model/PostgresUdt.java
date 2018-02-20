@@ -45,7 +45,7 @@ public class PostgresUdt {
 
         // BYTE
         //udtMap.put("bytea", Definition.BYTE);      // variable-length binary string
-        udtMap.put("bytea", Definition.STRING);      // variable-length binary string
+        udtMap.put("bytea", Definition.INTEGER);      // variable-length binary string
 
         // NETWORK
         udtMap.put("inet", Definition.STRING);      // IPv4 and IPv6 networks: 7 or 19 bytes

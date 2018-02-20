@@ -91,10 +91,9 @@ public class Constraint {
     }
 
     static class Index extends Constraint {
-        int startIndex;
         @Override
         public java.lang.String toString() {
-            return java.lang.String.format("from %d", startIndex);
+            return "";
         }
     }
 }
