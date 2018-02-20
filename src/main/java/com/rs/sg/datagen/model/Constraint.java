@@ -1,9 +1,8 @@
 package com.rs.sg.datagen.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Constraint {
 
@@ -21,6 +20,10 @@ public class Constraint {
         constraintsMap.put(Definition.INDEX,    Constraint.String.class);
     }
 
+    public java.lang.String minify() {
+        return this.toString();
+    }
+
     public static  <T extends Constraint> T createConstraint(Definition definition) throws Exception {
         return (T) constraintsMap.get(definition).newInstance();
     }
@@ -30,7 +33,7 @@ public class Constraint {
         int endNumber;
         @Override
         public java.lang.String toString() {
-            return java.lang.String.format("%d...%d", startNumber, endNumber);
+            return java.lang.String.format("%d..%d", startNumber, endNumber);
         }
     }
 
@@ -39,7 +42,7 @@ public class Constraint {
         int maxLen;
         @Override
         public java.lang.String toString() {
-            return java.lang.String.format("%d...%d", minLen, maxLen);
+            return java.lang.String.format("%d..%d", minLen, maxLen);
         }
     }
 
@@ -48,18 +51,19 @@ public class Constraint {
         double endNumber;
         @Override
         public java.lang.String toString() {
-            return java.lang.String.format("%d...%d", startNumber, endNumber);
+            return java.lang.String.format("%d..%d", startNumber, endNumber);
         }
     }
 
     static class Date extends Constraint {
-        Date start;
-        Date end;
+        java.util.Date start;
+        java.util.Date end;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         @Override
         public java.lang.String toString() {
-            return java.lang.String.format("%s...%s",
-                    start != null ? start.toString() : "-",
-                    end   != null ? end.toString()   : "-");
+            return java.lang.String.format("%s..%s",
+                    start != null ? sdf.format(start): "-",
+                    end   != null ? sdf.format(end)  : "-");
         }
     }
 
@@ -76,6 +80,12 @@ public class Constraint {
         List<java.lang.String> entries = new ArrayList<>();
         @Override
         public java.lang.String toString() {
+            List<java.lang.String> qEntries = entries.stream().map(s -> java.lang.String.format("\"%s\"", s)).collect(Collectors.toList());
+            java.lang.String[] arr = qEntries.toArray(new java.lang.String[qEntries.size()]);
+            return java.lang.String.format("%s", Arrays.toString(arr));
+        }
+        @Override
+        public java.lang.String minify() {
             return java.lang.String.format("[%d]", entries.size());
         }
     }

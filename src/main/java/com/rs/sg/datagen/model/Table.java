@@ -29,4 +29,5 @@ public class Table {
     public boolean hasColumns() {
         return columns != null && columns.size() > 0;
     }
+
 }

@@ -8,10 +8,34 @@
     <title>Servergraph Data-Generator</title>
     <h:outputStylesheet name="style.css"/>
 </h:head>
+
 <h:body  style="font-size: small">
+
     <p:growl id="growl" showDetail="true" life="2500"/>
-    <h1><p:outputLabel value="Data-Generator configuration"/></h1>
+
     <div class="m1">
+        <h1><p:outputLabel value="Data-Generator configuration" style="color: #717171"/></h1>
+
+        <h:form>
+        <p:toolbar>
+            <f:facet name="left">
+                <p:commandButton type="button" value="New" icon="ui-icon-document"/>
+                <p:commandButton type="button" value="Open" icon="ui-icon-folder-open"/>
+                <p:commandButton type="button" value="Save" title="Save" icon="ui-icon-disk"/>
+                <p:commandButton type="button" value="Clear" title="Clear" icon="ui-icon-trash"/>
+            </f:facet>
+            <f:facet name="right">
+                <h:form styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
+                    <p:commandButton value="Download" ajax="false" icon="ui-icon-arrowthick-1-s" update="growl">
+                        <p:fileDownload value="#{guiModel.file}"  />
+                    </p:commandButton>
+                </h:form>
+            </f:facet>
+        </p:toolbar>
+        </h:form>
+
+
+
         <h:form id="form_connect">
             <p:accordionPanel id="con_panel" >
                 <p:tab id="con_tab" title="Connection: #{guiModel.connected ? 'ON' : 'OFF'}" >
@@ -59,6 +83,7 @@
         <br/>
 
         <p:panel id="config_panel" header="Schema" >
+
             <h:form id="form_schema">
 
                 <h2><p:outputLabel for="table_name" value="Table name:"/></h2>
@@ -87,20 +112,18 @@
                             <p:outputLabel value="#{col.maxLength==0? '-' : col.maxLength}"/>
                         </p:column>
                         <p:column headerText="Defenition">
-                            <p:outputLabel id="column_definition" value="#{col.definitionFormatted()}"/>
+                            <p:outputLabel id="column_definition" value="#{col.definitionFormatted(false)}"/>
                         </p:column>
                         <p:column style="width:16px">
                             <p:rowToggler  />
                         </p:column>
-
-
 
                         <p:rowExpansion >
 
                             <h:form id="definition_form">
 
                                 <p:selectOneMenu value="#{col.definition}" >
-                                    <p:ajax event="itemSelect" listener="#{guiModel.itemSelected}" update="definition_form,:form_schema:column_table:column_definition"/>
+                                    <p:ajax event="itemSelect" update="definition_form,:form_schema:column_table:column_definition"/>
                                     <f:selectItems value="#{guiModel.definitions}"/>
                                 </p:selectOneMenu>
                                 <br/>
@@ -146,12 +169,48 @@
                                     </p:chips>
                                 </p:outputPanel>
 
+                                <!--DATE-->
+                                <p:outputPanel rendered="#{col.definition.toString() eq 'DATE'}">
+                                    <p:panelGrid class="ui-noborder" style="width: 400px" columns="2">
+                                        <p:outputLabel value="Start:"/>
+                                        <p:calendar id="start" value="#{col.constraint('start')}" pattern="dd-MM-yyyy" mask="true">
+                                            <f:param name="varName" value="start"/>
+                                            <p:ajax event="dateSelect" update="growl,:form_schema:column_table:column_definition"/>
+                                        </p:calendar>
+                                        <p:outputLabel value="End:"/>
+                                        <p:calendar id="end" value="#{col.constraint('end')}" pattern="dd-MM-yyyy" mask="true">
+                                            <f:param name="varName" value="end"/>
+                                            <p:ajax event="dateSelect" update="growl,:form_schema:column_table:column_definition"/>
+                                        </p:calendar>
+                                    </p:panelGrid>
+                                </p:outputPanel>
+
+                                <!--LINK-->
+                                <p:outputPanel rendered="#{col.definition.toString() eq 'LINK'}">
+                                    <p:panelGrid class="ui-noborder" style="width: 400px" columns="2">
+
+                                        <p:outputLabel value="Table:"/>
+                                        <p:autoComplete
+                                                id="link_table_name"
+                                                maxResults="25"
+                                                value="#{col.constraint('table')}"
+                                                completeMethod="#{guiModel.completeTable}">
+                                            <f:param name="varName" value="table"/>
+                                            <p:ajax event="itemSelect" update="growl,link_columns,:form_schema:column_table:column_definition"/>
+                                        </p:autoComplete>
+
+                                        <p:outputLabel value="Column:"/>
+                                        <p:selectOneMenu value="#{col.constraint('column')}" id="link_columns">
+                                            <f:selectItems value="#{guiModel.requestColumns(col.constraint('table'))}"/>
+                                            <f:param name="varName" value="column"/>
+                                            <p:ajax event="itemSelect" update="growl,:form_schema:column_table:column_definition"/>
+                                        </p:selectOneMenu>
+                                    </p:panelGrid>
+                                </p:outputPanel>
+
+
                             </h:form>
                         </p:rowExpansion>
-
-
-
-
 
                     </p:dataTable>
 
@@ -161,6 +220,20 @@
         </p:panel>
 
     </div>
+
+    <!--download dialog-->
+    <p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+        <p:graphicImage name="/demo/images/ajaxloadingbar.gif" />
+    </p:dialog>
+
+    <script type="text/javascript">
+        function start() {
+            PF('statusDialog').show();
+        }
+        function stop() {
+            PF('statusDialog').hide();
+        }
+    </script>
 
 </h:body>
 </html>

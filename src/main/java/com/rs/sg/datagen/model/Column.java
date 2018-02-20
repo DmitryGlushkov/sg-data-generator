@@ -54,8 +54,10 @@ public class Column {
         return definition;
     }
 
-    public String definitionFormatted(){
-        return String.format("%s: %s", definition, constraint);
+    public String definitionFormatted(boolean detailed){
+        return detailed ?
+                String.format("%s %s", definition.toString().toLowerCase(), constraint) :
+                String.format("%s %s", definition.toString().toLowerCase(), constraint.minify());
     }
 
     public void setDefinition(Definition def) throws Exception {

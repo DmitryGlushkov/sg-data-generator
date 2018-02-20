@@ -1,6 +1,10 @@
 package com.rs.sg.datagen.model;
 
 import com.rs.sg.datagen.service.DataManager;
+import com.rs.sg.datagen.utils.ConfigPrinter;
+import com.rs.sg.datagen.utils.InputStreamString;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -25,6 +29,8 @@ public class GuiModel {
     @ManagedProperty("#{connectionProperties}")
     private ConnectionProperties connectionProperties;
 
+    private Map<String, List<String>> columsCache = new HashMap<>();    // K:table name;    V:list of columns names
+
     private boolean isConnected = false;
     private List<String> tables = new ArrayList<>();
     private Table table = new Table();
@@ -32,11 +38,8 @@ public class GuiModel {
             Definition.STRING,
             Definition.INTEGER,
             Definition.DATE,
-            //Definition.NETWORK,
             Definition.DOUBLE,
             Definition.INDEX,
-            Definition.LINK,
-            //Definition.QUERY,
             Definition.SEQUENCE,
             Definition.INTEGER,
             Definition.LINK);
@@ -73,10 +76,21 @@ public class GuiModel {
         }
     }
 
-    public void itemSelected(AjaxBehaviorEvent event) {
-        System.out.println(1);
+    public List<String> requestColumns(String tableName) {
+        if (columsCache.containsKey(tableName)) {
+            return columsCache.get(tableName);
+        } else {
+            List<String> result = new ArrayList<>();
+            try {
+                result.add("");
+                result.addAll(dataManager.getColumns(tableName).stream().map(c -> c.getName()).collect(Collectors.toList()));
+                columsCache.put(tableName, result);
+            } catch (Exception e) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Exception", e.getMessage() != null ? e.getMessage() : e.toString()));
+            }
+            return result;
+        }
     }
-
 
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
@@ -106,14 +120,12 @@ public class GuiModel {
         return definitions;
     }
 
-    private int age;
+    public StreamedContent getFile() {
+        if (table.getName().isEmpty() || table.getColumns().size() == 0) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Exception", "empty configuration"));
+            return null;
+        }
 
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int a) {
-        age = a;
+        return new DefaultStreamedContent(new InputStreamString(ConfigPrinter.print(connectionProperties, table)), "text/plain", "gencfg.py");
     }
 }
