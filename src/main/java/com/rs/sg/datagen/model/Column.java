@@ -80,7 +80,15 @@ public class Column {
     public void setConstraint(Object o) {
         try {
             String varName = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("varName");
-            if(constraint.getClass().getDeclaredField(varName).getAnnotatedType().getType() == int.class){
+            setConstraint2(o, varName);
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Exception", e.getMessage() != null ? e.getMessage() : e.toString()));
+        }
+    }
+
+    public void setConstraint2(Object o, String varName) {
+        try {
+            if (constraint.getClass().getDeclaredField(varName).getAnnotatedType().getType() == int.class) {
                 o = Integer.valueOf((String) o);
             }
             constraint.getClass().getDeclaredField(varName).set(constraint, o);

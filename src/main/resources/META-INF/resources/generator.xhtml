@@ -16,11 +16,12 @@
     <div class="m1">
         <h1><p:outputLabel value="Data-Generator configuration" style="color: #717171"/></h1>
 
-        <h:form>
         <p:toolbar>
             <f:facet name="left">
-                <p:commandButton type="button" value="New" icon="ui-icon-document"/>
-                <p:commandButton type="button" value="Open" icon="ui-icon-folder-open"/>
+                <p:commandButton type="button" value="New" icon="ui-icon-document" onclick="reload()"/>
+                <h:form enctype="multipart/form-data" styleClass="the_upload_form">
+                    <p:fileUpload fileUploadListener="#{guiModel.upload}" auto="true" skinSimple="true" label="Open" styleClass="the_upload" update="growl,config_panel" />
+                </h:form>
                 <p:commandButton type="button" value="Save" title="Save" icon="ui-icon-disk"/>
                 <p:commandButton type="button" value="Clear" title="Clear" icon="ui-icon-trash"/>
             </f:facet>
@@ -32,9 +33,6 @@
                 </h:form>
             </f:facet>
         </p:toolbar>
-        </h:form>
-
-
 
         <h:form id="form_connect">
             <p:accordionPanel id="con_panel" >
@@ -82,20 +80,20 @@
 
         <br/>
 
-        <p:panel id="config_panel" header="Schema" >
+        <p:panel id="config_panel" header="Schema" visible="#{guiModel.connected}"  >
 
             <h:form id="form_schema">
 
-                <h2><p:outputLabel for="table_name" value="Table name:"/></h2>
+                <!--TABLE NAME-->
+                <p:outputPanel rendered="#{true}">
+                    <h2><p:outputLabel for="table_name" value="Table name:"/></h2>
+                    <p:autoComplete id="table_name" maxResults="25" value="#{guiModel.table.name}" completeMethod="#{guiModel.completeTable}" >
+                        <p:ajax event="itemSelect" listener="#{guiModel.requestTable}" update="config_panel,growl"/>
+                    </p:autoComplete>
+                </p:outputPanel>
 
-                <p:autoComplete
-                        id="table_name"
-                        maxResults="25"
-                        value="#{guiModel.table.name}"
-                        completeMethod="#{guiModel.completeTable}">
-                    <p:ajax event="itemSelect" listener="#{guiModel.requestTable}" update="config_panel,growl"/>
-                </p:autoComplete>
 
+                <!--TABLE COLUMNS-->
                 <p:outputPanel rendered="#{guiModel.table.hasColumns()}">
                     <h2><p:outputLabel value="Columns:"/></h2>
                     <p:dataTable id="column_table" var="col" value="#{guiModel.table.columns}">
@@ -223,6 +221,14 @@
 
                 </p:outputPanel>
 
+                <!--ROWS COUNT-->
+                <p:outputPanel rendered="#{guiModel.table.hasColumns()}">
+                    <h2><p:outputLabel for="rows_count" value="Rows count:"/></h2>
+                    <p:inputNumber id="rows_count" value="#{guiModel.table.rowCount}" decimalPlaces="0">
+                        <p:ajax/>
+                    </p:inputNumber>
+                </p:outputPanel>
+
             </h:form>
         </p:panel>
 
@@ -239,6 +245,9 @@
         }
         function stop() {
             PF('statusDialog').hide();
+        }
+        function reload() {
+            location.reload();
         }
     </script>
 

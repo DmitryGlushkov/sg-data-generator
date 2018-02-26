@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.rs.sg.datagen.utils.Constants.SDF_FORMAT;
+
 public class Constraint {
 
     private static final Map<Definition, Class<? extends Constraint>> constraintsMap = new HashMap<>();
@@ -58,7 +60,7 @@ public class Constraint {
     static class Date extends Constraint {
         java.util.Date start;
         java.util.Date end;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat(SDF_FORMAT);
         @Override
         public java.lang.String toString() {
             return java.lang.String.format("%s..%s",

@@ -2,3 +2,27 @@
     width: 1000px;
     margin: 0 auto;
 }
+
+.the_upload_form {
+    display: inline-block;
+}
+
+.the_upload {
+    display: inline-block;
+}
+
+.the_upload .ui-icon-plusthick {
+    background-position: -16px -96px;;
+}
+
+.the_upload .ui-fileupload-content {
+    display: none;
+}
+
+.the_upload .ui-fileupload-buttonbar {
+    background: transparent;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    display: inline-block;
+}

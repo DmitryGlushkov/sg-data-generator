@@ -1,10 +1,14 @@
 package com.rs.sg.datagen.model;
 
 import com.rs.sg.datagen.service.DataManager;
+import com.rs.sg.datagen.utils.ConfigParser;
 import com.rs.sg.datagen.utils.ConfigPrinter;
 import com.rs.sg.datagen.utils.InputStreamString;
+import org.primefaces.component.tabview.Tab;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -13,11 +17,14 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 import static javax.faces.application.FacesMessage.SEVERITY_INFO;
+import static javax.faces.application.FacesMessage.SEVERITY_WARN;
 
 @ManagedBean
 @ViewScoped
@@ -61,7 +68,7 @@ public class GuiModel {
 
     public List<String> completeTable(String query) {
         final String queryLower = query.toLowerCase();
-        return tables.stream().filter(t -> t.contains(queryLower)).collect(Collectors.toList());
+        return tables.stream().filter(t -> t.startsWith(queryLower)).sorted().collect(Collectors.toList());
     }
 
     public void requestTable(AjaxBehaviorEvent event) {
@@ -127,5 +134,21 @@ public class GuiModel {
         }
 
         return new DefaultStreamedContent(new InputStreamString(ConfigPrinter.print(connectionProperties, table)), "text/plain", "gencfg.py");
+    }
+
+    public void upload(FileUploadEvent event) throws Exception {
+        if(!isConnected) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Exception", "Database connection needed"));
+            return;
+        }
+        UploadedFile uploadedFile = event.getFile();
+        String[] lines = new String(uploadedFile.getContents()).split("\n");
+        List<Table> parsedTables = ConfigParser.parse(lines, dataManager);
+        if (parsedTables.size() > 0) {
+            table = parsedTables.get(0);
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_WARN, "Warning", "Can not read the file " + event.getFile().getFileName()));
+        }
+        System.out.println(1);
     }
 }
