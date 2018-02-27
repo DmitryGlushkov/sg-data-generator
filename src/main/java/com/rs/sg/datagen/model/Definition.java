@@ -2,21 +2,60 @@ package com.rs.sg.datagen.model;
 
 public enum Definition {
 
-    // 1 - for built-in types
-    STRING,
-    INTEGER,
-    DOUBLE,
-    DATE,
+    STRING {
+        @Override
+        public String[] varNames() {
+            return new String[]{"minLen", "maxLen"};
+        }
+    },
 
-    // 2 - for customs
-    LINK,
-    SEQUENCE,
-    INDEX,
-    QUERY
-    ;
+    INTEGER {
+        @Override
+        public String[] varNames() {
+            return new String[]{"startNumber", "endNumber"};
+        }
+    },
 
-    @Override
-    public String toString() {
-        return super.toString();
+    DOUBLE {
+        @Override
+        public String[] varNames() {
+            return new String[]{"startNumber", "endNumber"};
+        }
+    },
+
+    DATE {
+        @Override
+        public String[] varNames() {
+            return new String[]{"start", "end"};
+        }
+    },
+
+    LINK {
+        @Override
+        public String[] varNames() {
+            return new String[]{"table", "column"};
+        }
+    },
+
+    SEQUENCE {
+        @Override
+        public String[] varNames() {
+            return new String[]{"entries"};
+        }
+    },
+
+    QUERY {
+        @Override
+        public String[] varNames() {
+            return new String[]{"query"};
+        }
+    },
+
+    SKIP,
+
+    INDEX;
+
+    public String[] varNames() {
+        return new String[0];
     }
 }

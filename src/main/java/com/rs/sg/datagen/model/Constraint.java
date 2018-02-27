@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.rs.sg.datagen.utils.Constants.SDF_FORMAT;
+import static com.rs.sg.datagen.utils.Constants.SDF_FORMAT_MINIFY;
 
 public class Constraint {
 
@@ -20,6 +21,7 @@ public class Constraint {
         constraintsMap.put(Definition.LINK,     Constraint.Link.class);
         constraintsMap.put(Definition.SEQUENCE, Constraint.Sequence.class);
         constraintsMap.put(Definition.INDEX,    Constraint.String.class);
+        constraintsMap.put(Definition.QUERY,    Constraint.Query.class);
     }
 
     public java.lang.String minify() {
@@ -53,19 +55,22 @@ public class Constraint {
         double endNumber;
         @Override
         public java.lang.String toString() {
-            return java.lang.String.format("%d..%d", startNumber, endNumber);
+            return java.lang.String.format("%f..%f", startNumber, endNumber);
         }
     }
 
     static class Date extends Constraint {
-        java.util.Date start;
-        java.util.Date end;
+        static SimpleDateFormat sdfMini = new SimpleDateFormat(SDF_FORMAT_MINIFY);
+        java.util.Date start = new java.util.Date();
+        java.util.Date end = new java.util.Date();
         SimpleDateFormat sdf = new SimpleDateFormat(SDF_FORMAT);
         @Override
         public java.lang.String toString() {
-            return java.lang.String.format("%s..%s",
-                    start != null ? sdf.format(start): "-",
-                    end   != null ? sdf.format(end)  : "-");
+            return java.lang.String.format("%s..%s", sdf.format(start), sdf.format(end));
+        }
+        @Override
+        public java.lang.String minify() {
+            return java.lang.String.format("%s..%s", sdfMini.format(start), sdfMini.format(end));
         }
     }
 
@@ -75,6 +80,23 @@ public class Constraint {
         @Override
         public java.lang.String toString() {
             return java.lang.String.format("%s.%s", table, column);
+        }
+    }
+
+    static class Query extends Constraint {
+        java.lang.String query;
+        @Override
+        public java.lang.String toString() {
+            return query;
+        }
+        @Override
+        public java.lang.String minify() {
+            int len = 7;
+            java.lang.String q = "";
+            if (query != null) {
+                q = query.length() <= len ? query : query.substring(0, len);
+            }
+            return java.lang.String.format("%s...", q);
         }
     }
 

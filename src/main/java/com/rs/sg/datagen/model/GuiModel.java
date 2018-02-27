@@ -1,15 +1,15 @@
 package com.rs.sg.datagen.model;
 
+import com.rs.sg.datagen.AppConfig;
 import com.rs.sg.datagen.service.DataManager;
-import com.rs.sg.datagen.utils.ConfigParser;
-import com.rs.sg.datagen.utils.ConfigPrinter;
+import com.rs.sg.datagen.utils.FileUtils;
 import com.rs.sg.datagen.utils.InputStreamString;
-import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -17,8 +17,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,15 +40,24 @@ public class GuiModel {
     private boolean isConnected = false;
     private List<String> tables = new ArrayList<>();
     private Table table = new Table();
-    private List<Definition> definitions = Arrays.asList(
-            Definition.STRING,
-            Definition.INTEGER,
-            Definition.DOUBLE,
-            Definition.DATE,
-            Definition.INDEX,
-            Definition.SEQUENCE,
-            Definition.QUERY,
-            Definition.LINK);
+    private List<Definition> definitions;
+    private List<Definition> definitionsNotNull;
+
+    @PostConstruct
+    void init() {
+        definitions = new ArrayList<>(Arrays.asList(
+                Definition.STRING,
+                Definition.INTEGER,
+                Definition.DOUBLE,
+                Definition.DATE,
+                Definition.INDEX,
+                Definition.SEQUENCE,
+                Definition.QUERY,
+                Definition.SKIP,
+                Definition.LINK));
+        definitionsNotNull = new ArrayList<>(definitions);
+        definitionsNotNull.remove(Definition.SKIP);
+    }
 
     public void onConnect() {
         tables.clear();
@@ -123,8 +131,8 @@ public class GuiModel {
         return table;
     }
 
-    public List<Definition> getDefinitions() {
-        return definitions;
+    public List<Definition> availableDefinitions(boolean nullable) {
+        return nullable ? definitions : definitionsNotNull;
     }
 
     public StreamedContent getFile() {
@@ -133,17 +141,22 @@ public class GuiModel {
             return null;
         }
 
-        return new DefaultStreamedContent(new InputStreamString(ConfigPrinter.print(connectionProperties, table)), "text/plain", "gencfg.py");
+        String fileExtension = "py";
+        String content = FileUtils.print(connectionProperties, table, dataManager, FileUtils.Print.JSON);
+        InputStream in = new InputStreamString(content);
+        String fileName = String.format("gencfg.%s", fileExtension);
+
+        return new DefaultStreamedContent(in, "text/plain", fileName);
     }
 
     public void upload(FileUploadEvent event) throws Exception {
-        if(!isConnected) {
+        if (!isConnected) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Exception", "Database connection needed"));
             return;
         }
         UploadedFile uploadedFile = event.getFile();
         String[] lines = new String(uploadedFile.getContents()).split("\n");
-        List<Table> parsedTables = ConfigParser.parse(lines, dataManager);
+        List<Table> parsedTables = FileUtils.parse(lines, dataManager, AppConfig.currentPrint);
         if (parsedTables.size() > 0) {
             table = parsedTables.get(0);
         } else {

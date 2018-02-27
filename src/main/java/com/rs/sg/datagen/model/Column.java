@@ -3,6 +3,8 @@ package com.rs.sg.datagen.model;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import java.lang.reflect.Type;
+
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
 public class Column {
@@ -88,8 +90,11 @@ public class Column {
 
     public void setConstraint2(Object o, String varName) {
         try {
-            if (constraint.getClass().getDeclaredField(varName).getAnnotatedType().getType() == int.class) {
+            final Type fieldType = constraint.getClass().getDeclaredField(varName).getAnnotatedType().getType();
+            if (fieldType == int.class) {
                 o = Integer.valueOf((String) o);
+            } else if (fieldType == double.class) {
+                o = Double.valueOf((String) o);
             }
             constraint.getClass().getDeclaredField(varName).set(constraint, o);
         } catch (Exception e) {

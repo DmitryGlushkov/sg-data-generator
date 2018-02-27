@@ -10,4 +10,6 @@ public class Constants {
 
     public static final String SDF_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+    public static final String SDF_FORMAT_MINIFY = "yyyy-MM-dd";
+
 }

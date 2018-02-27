@@ -20,7 +20,7 @@
             <f:facet name="left">
                 <p:commandButton type="button" value="New" icon="ui-icon-document" onclick="reload()"/>
                 <h:form enctype="multipart/form-data" styleClass="the_upload_form">
-                    <p:fileUpload fileUploadListener="#{guiModel.upload}" auto="true" skinSimple="true" label="Open" styleClass="the_upload" update="growl,config_panel" />
+                    <p:fileUpload fileUploadListener="#{guiModel.upload}" allowTypes="/(\.|\/)(py|json)$/" auto="true" skinSimple="true" label="Open" styleClass="the_upload" update="growl,config_panel" />
                 </h:form>
                 <p:commandButton type="button" value="Save" title="Save" icon="ui-icon-disk"/>
                 <p:commandButton type="button" value="Clear" title="Clear" icon="ui-icon-trash"/>
@@ -122,9 +122,25 @@
 
                                 <p:selectOneMenu value="#{col.definition}" >
                                     <p:ajax event="itemSelect" update="definition_form,:form_schema:column_table:column_definition"/>
-                                    <f:selectItems value="#{guiModel.definitions}"/>
+                                    <f:selectItems value="#{guiModel.availableDefinitions(col.nullable)}"/>
                                 </p:selectOneMenu>
                                 <br/>
+
+                                <!--STRING-->
+                                <p:outputPanel rendered="#{col.definition.toString() eq 'STRING'}">
+                                    <p:panelGrid class="ui-noborder" style="width: 400px" columns="2">
+                                        <p:outputLabel value="Min length:"/>
+                                        <p:inputNumber id="minLen" value="#{col.constraint('minLen')}" decimalPlaces="0">
+                                            <f:param name="varName" value="minLen"/>
+                                            <p:ajax update="growl,:form_schema:column_table:column_definition"/>
+                                        </p:inputNumber>
+                                        <p:outputLabel value="Max length:"/>
+                                        <p:inputNumber id="maxLen" value="#{col.constraint('maxLen')}" decimalPlaces="0">
+                                            <f:param name="varName" value="maxLen"/>
+                                            <p:ajax update="growl,:form_schema:column_table:column_definition"/>
+                                        </p:inputNumber>
+                                    </p:panelGrid>
+                                </p:outputPanel>
 
                                 <!--INTEGER-->
                                 <p:outputPanel rendered="#{col.definition.toString() eq 'INTEGER'}">
@@ -142,17 +158,17 @@
                                     </p:panelGrid>
                                 </p:outputPanel>
 
-                                <!--STRING-->
-                                <p:outputPanel rendered="#{col.definition.toString() eq 'STRING'}">
+                                <!--DOUBLE-->
+                                <p:outputPanel rendered="#{col.definition.toString() eq 'DOUBLE'}">
                                     <p:panelGrid class="ui-noborder" style="width: 400px" columns="2">
-                                        <p:outputLabel value="Min length:"/>
-                                        <p:inputNumber id="minLen" value="#{col.constraint('minLen')}" decimalPlaces="0">
-                                            <f:param name="varName" value="minLen"/>
+                                        <p:outputLabel value="Start number:"/>
+                                        <p:inputNumber id="startNumber1" value="#{col.constraint('startNumber')}" decimalPlaces="3">
+                                            <f:param name="varName" value="startNumber"/>
                                             <p:ajax update="growl,:form_schema:column_table:column_definition"/>
                                         </p:inputNumber>
-                                        <p:outputLabel value="Max length:"/>
-                                        <p:inputNumber id="maxLen" value="#{col.constraint('maxLen')}" decimalPlaces="0">
-                                            <f:param name="varName" value="maxLen"/>
+                                        <p:outputLabel value="End number:"/>
+                                        <p:inputNumber id="endNumber1" value="#{col.constraint('endNumber')}" decimalPlaces="3">
+                                            <f:param name="varName" value="endNumber"/>
                                             <p:ajax update="growl,:form_schema:column_table:column_definition"/>
                                         </p:inputNumber>
                                     </p:panelGrid>
@@ -206,7 +222,10 @@
 
                                 <!--QUERY-->
                                 <p:outputPanel rendered="#{col.definition.toString() eq 'QUERY'}">
-                                    <p:inputText validator="#{queryValidator}"/>
+                                    <p:inputText id="query" value="#{col.constraint('query')}" style="width: 600px;">
+                                        <f:param name="varName" value="query"/>
+                                        <p:ajax update="growl,:form_schema:column_table:column_definition"/>
+                                    </p:inputText>
                                 </p:outputPanel>
 
                                 <!--INDEX-->
